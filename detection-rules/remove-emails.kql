@@ -1,0 +1,17 @@
+// This can be used as a detection rule to remove specific emails from users inboxes
+EmailEvents
+| where Timestamp < ago(1sec)
+//Get email processing events where the messages were identified as either phishing or malware
+| where ThreatTypes has "Malware" or ThreatTypes has "Phish" or ThreatTypes has "Spam" 
+// Email was delivered to inbox
+| where DeliveryAction contains "Delivered" //(you can comment this out by using // at the begining)
+// email from User
+|where SenderFromAddress == "email@domain.com" //(you can comment this out by using // at the begining)
+// Subject Equals
+|where Subject contains "Text In Subject Line" //(you can comment this out by using // at the begining)
+//Merge email events with identity info to get recipient details
+| join (IdentityInfo | distinct AccountUpn, AccountDisplayName, JobTitle, Department, City, Country) on $left.RecipientEmailAddress == $right.AccountUpn 
+//Show important message and recipient details
+| project Timestamp, SenderDisplayName, SenderFromAddress, SenderFromDomain, SenderIPv4, RecipientEmailAddress, Subject, EmailDirection, DeliveryAction, DeliveryLocation, ThreatTypes, ThreatNames, DetectionMethods, ConfidenceLevel, EmailAction, EmailActionPolicy, AttachmentCount, UrlCount, AccountDisplayName, JobTitle, Department, NetworkMessageId, ReportId
+//Sort by Time Received
+| sort by Timestamp desc 
