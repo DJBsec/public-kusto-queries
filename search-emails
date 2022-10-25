@@ -1,0 +1,11 @@
+EmailEvents 
+// Senders Domain equals 
+| where SenderFromDomain == "domain.com" //(you can comment this out by using // at the begining)
+// sender Email Address
+| where SenderFromAddress contains "@domain.com" //(you can comment this out by using // at the begining)
+// Recipient Email Address
+| where RecipientEmailAddress contains "user@email.com" //(you can comment this out by using // at the begining)
+// Field to show in query
+| project Timestamp, SenderFromAddress, SenderDisplayName, SenderFromDomain, SenderIPv4, RecipientEmailAddress, Subject, EmailDirection, DeliveryAction, DeliveryLocation
+// sort by Time 
+| sort by Timestamp desc 

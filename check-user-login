@@ -1,0 +1,8 @@
+IdentityLogonEvents 
+// Choose account to look at by UPN
+| where AccountUpn contains "jose.cantu@gwii.com"
+// Do Not show logins that came from inside this country
+| where Location !contains "country" 
+// Show the time the login was tried, with the failure reason and the country with IP and ISP data
+| project Timestamp, ActionType, Application, LogonType, FailureReason, AccountDisplayName, DeviceType, OSPlatform, IPAddress, Location, ISP, AdditionalFields 
+| sort by Timestamp desc  
